@@ -4,7 +4,7 @@ Detecting Emotions from Text
 ##### Purpose
 The main purpose of this project is to develop a model that is able to classify the tone of reddit posts as positive, negative, or neutral.  
 
-**Follow Up Goals:** 
+*Follow Up Goals:* 
 I'd like to develop a model that can correctly classify the emotion of each post. I'd also like to look at the likelihoods of each subreddit, given the text within each post, and explore similarities across subreddits.  This could help recommend subreddits to people, based on their posts. 
 
 
