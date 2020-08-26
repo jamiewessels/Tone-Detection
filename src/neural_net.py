@@ -58,6 +58,8 @@ model2.add(Dense(32, activation = 'relu'))
 
 model2.add(Dense(32, activation = 'relu'))
 
+model2.add(Dense(16, activation = 'relu'))
+
 model2.add(Dense(3, activation = 'softmax'))
 
 model2.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])

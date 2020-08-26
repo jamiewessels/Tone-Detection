@@ -33,7 +33,7 @@ tfid_ho = tfid_vectorizer.transform(X_ho).toarray()
 
 #RANDOM FOREST CLASSIFIER
 
-'''
+
 rf_final = RandomForestClassifier(n_estimators = 500, n_jobs = -1, verbose = 10, class_weight='balanced', max_features='sqrt', max_depth=15)
 rf_final.fit(tfid_vect, y_train)
 
@@ -46,7 +46,13 @@ rf_auc_score = roc_auc_score(y_test, rf_proba, average = 'macro', multi_class = 
 rf_class_rept = classification_report(y_test, rf_yhat_test)
 print(rf_class_rept)
 print(rf_auc_score)
-'''
+
+#create DataFrame of Probabilities
+rf_probabilities = pd.DataFrame(rf_proba)
+rf_probabilities['predicted'] = rf_yhat_test
+rf_probabilities['true'] = y_test
+rf_probabilities.columns = ['negative_prob', 'neutral_prob', 'positive_prob', 'predicted', 'true']
+
 
 #Tuning RF Using GSEARCH
 '''
@@ -79,7 +85,7 @@ print(rf_tune(model, param_dict))
 
 #Using NMF 
 
-
+'''
 nmf = NMF(n_components = 300, max_iter = 3000)
 W = nmf.fit_transform(tfid_vect)
 H = nmf.components_
@@ -100,3 +106,5 @@ rf_auc_score = roc_auc_score(y_test, rf_proba, average = 'macro', multi_class = 
 rf_class_rept = classification_report(y_test, rf_yhat_test)
 print(rf_class_rept)
 print(rf_auc_score)
+'''
+

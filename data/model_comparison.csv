@@ -1,6 +1,6 @@
-,,,,,,,,,,,,,
-,Negative Precision,Neutral Precision,Positive Precision,Macro-avg Precision,Negative Recall,Neutral Recall,Positive Recall,Macro-avg Recall,Negative F1-Score,Neutral F1-Score,Positive F1-Score,Macro-avg F1-Score,Avg Accuracy
-MNB,0.64,0.52,0.67,0.61,0.3,0.77,0.55,0.54,0.41,0.62,0.6,0.54,0.58
-XGB,0.64,0.53,0.76,0.64,0.32,0.84,0.51,0.56,0.42,0.65,0.61,0.56,0.6
-RF,0.56,0.53,0.8,0.63,0.4,0.83,0.45,0.56,0.46,0.64,0.57,0.56,0.59
-NN,0.53,0.6,0.47,0.53,0.62,0.55,0.39,0.52,0.57,0.57,0.43,0.52,0.54
+,,,,,,,,,,,,,,
+,Negative Precision,Neutral Precision,Positive Precision,Macro-avg Precision,Negative Recall,Neutral Recall,Positive Recall,Macro-avg Recall,Negative F1-Score,Neutral F1-Score,Positive F1-Score,Macro-avg F1-Score,Avg Accuracy,ROC_AUC_Score
+Multi.Naive.Bayes,0.66,0.52,0.6,0.59,0.35,0.64,0.66,0.55,0.45,0.57,0.63,0.55,0.57,0.757
+XGBoost,0.68,0.51,0.77,0.65,0.36,0.83,0.54,0.58,0.47,0.63,0.64,0.58,0.6,0.768
+RandForest,0.6,0.5,0.82,0.64,0.42,0.83,0.47,0.57,0.5,0.62,0.6,0.57,0.59,0.761
+Multi.Perceptron,0.52,0.6,0.52,0.54,0.55,0.6,0.46,0.54,0.53,0.6,0.49,0.54,0.55,0.703

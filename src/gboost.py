@@ -58,6 +58,12 @@ xg_class_rept = classification_report(y_test, xg_yhat_test)
 print(xg_class_rept)
 print(xg_auc_score)
 
+xg_probabilities = pd.DataFrame(xg_proba)
+xg_probabilities['predicted'] = xg_yhat_test
+xg_probabilities['true'] = np.array(y_test)
+xg_probabilities.columns = ['negative_prob', 'neutral_prob', 'positive_prob', 'predicted', 'true']
+
+xg_probabilities.to_csv('../data/xg_probabilities.csv')
 
 # {'true_label': y_test, 'predicted_label': xg_yhat_test}
 

@@ -42,3 +42,10 @@ mnb_auc_score = roc_auc_score(y_test, mnb_proba, average = 'macro', multi_class=
 mnb_class_rept = classification_report(y_test, mnb_yhat_test)
 print(mnb_class_rept)
 print(mnb_auc_score)
+
+mnb_probabilities = pd.DataFrame(mnb_proba)
+mnb_probabilities['predicted'] = mnb_yhat_test
+mnb_probabilities['true'] = np.array(y_test)
+mnb_probabilities.columns = ['negative_prob', 'neutral_prob', 'positive_prob', 'predicted', 'true']
+
+mnb_probabilities.to_csv('../data/mnb_probabilities.csv')
