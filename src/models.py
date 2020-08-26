@@ -1,17 +1,6 @@
-import pandas as pd
-import numpy as np
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import nltk 
-import string
-import unicodedata
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk.tokenize import punkt
-from nltk.stem.porter import PorterStemmer
-from nltk.stem.snowball import SnowballStemmer
-from nltk.stem.wordnet import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.decomposition import NMF, PCA
 from sklearn.model_selection import train_test_split
@@ -22,6 +11,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import recall_score, precision_score, accuracy_score, f1_score, roc_auc_score, classification_report
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import LabelEncoder
+
+y_labels = LabelEncoder().fit_transform(tone)
 
 #HOLD-0UT DATA 
 X_val, X_ho, y_val, y_ho = train_test_split(X, tone, stratify = tone, test_size = 0.15, random_state = 7)
@@ -30,7 +22,7 @@ X_val, X_ho, y_val, y_ho = train_test_split(X, tone, stratify = tone, test_size 
 X_train, X_test, y_train, y_test = train_test_split(X_val, y_val, stratify = y_val, test_size = 0.2, random_state = 7)
 
 #VECTORIZE TRAINING DATA
-tfid_vectorizer = TfidfVectorizer(max_features = 5000)
+tfid_vectorizer = TfidfVectorizer(max_features = 1000)
 tfid_vect = tfid_vectorizer.fit_transform(X_train).toarray()
 words_tfid = tfid_vectorizer.get_feature_names()
 
@@ -49,6 +41,11 @@ top_idx = np.argsort(np.sum(count_vect, axis = 0))[::-1][:20]
 top_words = np.array(words_count)[top_idx]
 '''
 
+#most influential words (tfid matrix)
+'''
+top_idx = np.argsort(np.sum(tfid_vect, axis = 0))[::-1][:20]
+top_words = np.array(words_tfid)[top_idx]
+'''
 
 #####EXPLORE DIMENSION REDUCTION#####
 #PCA 100 Components
@@ -57,13 +54,6 @@ pca = PCA(n_components = 100)
 pca.fit_transform(tfid_vect)
 exp_var_ratio = pca.explained_variance_ratio_
 exp_sing_vals = pca.singular_values_
-'''
-
-#PCA 5,000 Components
-'''
-pca = PCA(n_components = 5000)
-pca.fit_transform(tfid_vect)
-exp_var_ratio = pca.explained_variance_ratio_
 '''
 
 #PCA Plots: explained variance ratios
@@ -110,86 +100,22 @@ sigma_cum = np.cumsum(s_sq)*100/ np.sum(sigma_sq)
 '''
 
 
-#NAIVE BAYES MODEL: Multinomial
-'''
-print('multinomial NB')
-mnb = MultinomialNB()
-mnb.fit(tfid_vect, y_train)
-mnb_yhat_train = mnb.predict(tfid_vect)
-mnb_yhat_test = mnb.predict(tfid_test)
+#NMF EXPLORATION
 
-# mnb_acc_train = mnb.score(tfid_vect, y_train)
-# mnb_acc_test = mnb.score(tfid_test, y_test)
-# mnb_f1_macro_train = f1_score(y_train, mnb_yhat_train, average = 'macro') 
-# mnb_f1_macro_test = f1_score(y_test, mnb_yhat_test, average = 'macro') 
+nmf = NMF(n_components = 30, max_iter = 3000)
+W = nmf.fit_transform(tfid_vect)
+H = nmf.components_
+recon_err = nmf.reconstruction_err_
 
-mnb_proba = mnb.predict_proba(tfid_test)
-mnb_auc_score = roc_auc_score(y_test, mnb_proba, average = 'macro', multi_class='ovo')
-mnb_class_rept = classification_report(y_test, mnb_yhat_test)
-print(mnb_class_rept)
-'''
-#GRADIENT BOOSTING CLASSIFIER
-'''
-gb=GradientBoostingClassifier(n_estimators=200,learning_rate=0.1, verbose = 10)
-gb.fit(tfid_vect,y_train)
-'''
+print(recon_err)
 
-#RANDOM FOREST CLASSIFIER
-'''
-print('random forest classifier')
-rf = RandomForestClassifier(n_jobs=-1)
-rf_parms = {'n_estimators':[100, 300, 500], 'max_depth':[3, 5], 'max_features': [3, 'auto']}
+topic_labels = []
+for i, row in enumerate(H):
+    top_ten = list(np.argsort(row)[::-1][:10])
+    # print(top_ten)
+    # print('topic', i)
+    print(f'Latent Topic #{i+1}: {np.array(words_tfid)[top_ten]}')
+    topic_labels.append(top_ten)
 
-rf_gsearch = GridSearchCV(rf, rf_parms, scoring = 'neg_log_loss', n_jobs= -1, verbose = 10)
-rf_gsearch.fit(tfid_vect, y_train)
-
-rf_best = rf_gsearch.best_params_
-print(f'RF Best: {rf_gsearch.best_estimator_}')
-'''
-
-rf = RandomForestClassifier(n_estimators = 100, n_jobs = -1, verbose = 10, class_weight='balanced')
-rf.fit(tfid_vect, y_train)
-
-
-rf_yhat_train = rf.predict(tfid_vect) 
-rf_yhat_test = rf.predict(tfid_test)
-# rf_f1_macro_train = f1_score(y_train, rf_yhat_train, average = 'macro')  
-# rf_f1_macro_test = f1_score(y_test, rf_yhat_test, average = 'macro')    
-# rf_acc_train = rf.score(tfid_vect, y_train) 
-# rf_acc_test = rf.score(tfid_test, y_test)
-
-rf_proba = rf.predict_proba(tfid_test)  
-rf_auc_score = roc_auc_score(y_test, rf_proba, average = 'macro', multi_class = 'ovo') 
-
-rf_class_rept = classification_report(y_test, rf_yhat_test)
-print(rf_class_rept)
-print(rf_auc_score)
-
-
-
-#DECISION TREE
-'''
-max_depths = [5, 10, 20, 50]
-for depth in max_depths:
-    print('next tree: \n')
-    tree = DecisionTreeClassifier(max_depth = depth)
-    tree.fit(tfid_vect, y_train)
-    print(f'{depth}: train: {tree.score(tfid_vect, y_train)} test: {tree.score(tfid_test, y_test)}')
-'''
-
-
-
-'''
-cross_val_score(estimator=gb,X=tfid_test,y=y_test,scoring='f1_weighted',cv=5)
-class_rept = classification_report(y_true=y_test,y_pred=gb.predict(tfid_test))
-
-mnb_yhat_train = mnb.predict(tfid_vect)
-mnb_yhat_test = mnb.predict(tfid_test)
-mnb_acc_train = mnb.score(tfid_vect, y_train)
-mnb_acc_test = mnb.score(tfid_test, y_test)
-mnb_f1_macro_train = f1_score(y_train, mnb_yhat_train, average = 'macro') 
-mnb_f1_macro_test = f1_score(y_test, mnb_yhat_test, average = 'macro') 
-
-mnb_proba = mnb.predict_proba(tfid_test)
-mnb_auc_score = roc_auc_score(y_test, mnb_proba, average = 'macro', multi_class='ovo')
-'''
+nmf_train = W
+nmf_test = nmf.transform(tfid_test)
