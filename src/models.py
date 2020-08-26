@@ -20,16 +20,23 @@ from cleaning_and_vectorization import X, tone, emotion, X_text_and_SR
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import recall_score, precision_score, accuracy_score, f1_score, roc_auc_score, classification_report
+from sklearn.linear_model import SGDClassifier
+from sklearn.model_selection import GridSearchCV
 
+#HOLD-0UT DATA 
+X_val, X_ho, y_val, y_ho = train_test_split(X, tone, stratify = tone, test_size = 0.15, random_state = 7)
 
 #TRAIN TEST SPLIT BEFORE VECTORIZATION
-X_train, X_test, y_train, y_test = train_test_split(X, tone, stratify = tone, test_size = 0.2)
+X_train, X_test, y_train, y_test = train_test_split(X_val, y_val, stratify = y_val, test_size = 0.2, random_state = 7)
 
 #VECTORIZE TRAINING DATA
-tfid_vectorizer = TfidfVectorizer()
+tfid_vectorizer = TfidfVectorizer(max_features = 5000)
 tfid_vect = tfid_vectorizer.fit_transform(X_train).toarray()
 words_tfid = tfid_vectorizer.get_feature_names()
+
+#transforming X_test and X_holdout
 tfid_test = tfid_vectorizer.transform(X_test).toarray()
+tfid_ho = tfid_vectorizer.transform(X_ho).toarray()
 
 count_vectorizer = CountVectorizer()
 count_vect = count_vectorizer.fit_transform(X_train).toarray()
@@ -105,39 +112,59 @@ sigma_cum = np.cumsum(s_sq)*100/ np.sum(sigma_sq)
 
 #NAIVE BAYES MODEL: Multinomial
 '''
+print('multinomial NB')
 mnb = MultinomialNB()
 mnb.fit(tfid_vect, y_train)
 mnb_yhat_train = mnb.predict(tfid_vect)
 mnb_yhat_test = mnb.predict(tfid_test)
-mnb_acc_train = mnb.score(tfid_vect, y_train)
-mnb_acc_test = mnb.score(tfid_test, y_test)
-mnb_f1_macro_train = f1_score(y_train, mnb_yhat_train, average = 'macro') 
-mnb_f1_macro_test = f1_score(y_test, mnb_yhat_test, average = 'macro') 
+
+# mnb_acc_train = mnb.score(tfid_vect, y_train)
+# mnb_acc_test = mnb.score(tfid_test, y_test)
+# mnb_f1_macro_train = f1_score(y_train, mnb_yhat_train, average = 'macro') 
+# mnb_f1_macro_test = f1_score(y_test, mnb_yhat_test, average = 'macro') 
 
 mnb_proba = mnb.predict_proba(tfid_test)
 mnb_auc_score = roc_auc_score(y_test, mnb_proba, average = 'macro', multi_class='ovo')
+mnb_class_rept = classification_report(y_test, mnb_yhat_test)
+print(mnb_class_rept)
 '''
-
 #GRADIENT BOOSTING CLASSIFIER
 '''
-gb=GradientBoostingClassifier(n_estimators=200,learning_rate=0.1)
+gb=GradientBoostingClassifier(n_estimators=200,learning_rate=0.1, verbose = 10)
 gb.fit(tfid_vect,y_train)
 '''
 
 #RANDOM FOREST CLASSIFIER
+'''
+print('random forest classifier')
+rf = RandomForestClassifier(n_jobs=-1)
+rf_parms = {'n_estimators':[100, 300, 500], 'max_depth':[3, 5], 'max_features': [3, 'auto']}
 
-rf = RandomForestClassifier(n_estimators = 100, n_jobs = -1, verbose = 10)
+rf_gsearch = GridSearchCV(rf, rf_parms, scoring = 'neg_log_loss', n_jobs= -1, verbose = 10)
+rf_gsearch.fit(tfid_vect, y_train)
+
+rf_best = rf_gsearch.best_params_
+print(f'RF Best: {rf_gsearch.best_estimator_}')
+'''
+
+rf = RandomForestClassifier(n_estimators = 100, n_jobs = -1, verbose = 10, class_weight='balanced')
 rf.fit(tfid_vect, y_train)
 
-rf_acc_train = rf.score(tfid_vect, y_train) 
-rf_acc_test = rf.score(tfid_test, y_test)
+
 rf_yhat_train = rf.predict(tfid_vect) 
 rf_yhat_test = rf.predict(tfid_test)
-rf_f1_macro_train = f1_score(y_train, rf_yhat_train, average = 'macro')  
-rf_f1_macro_test = f1_score(y_test, rf_yhat_test, average = 'macro')    
+# rf_f1_macro_train = f1_score(y_train, rf_yhat_train, average = 'macro')  
+# rf_f1_macro_test = f1_score(y_test, rf_yhat_test, average = 'macro')    
+# rf_acc_train = rf.score(tfid_vect, y_train) 
+# rf_acc_test = rf.score(tfid_test, y_test)
 
 rf_proba = rf.predict_proba(tfid_test)  
 rf_auc_score = roc_auc_score(y_test, rf_proba, average = 'macro', multi_class = 'ovo') 
+
+rf_class_rept = classification_report(y_test, rf_yhat_test)
+print(rf_class_rept)
+print(rf_auc_score)
+
 
 
 #DECISION TREE

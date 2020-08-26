@@ -1,0 +1,10 @@
+,y_test_true,mnb_pred,0
+0,negative,negative,437
+1,negative,neutral,1347
+2,negative,positive,656
+3,neutral,negative,181
+4,neutral,neutral,2887
+5,neutral,positive,1075
+6,positive,negative,80
+7,positive,neutral,1366
+8,positive,positive,2297
