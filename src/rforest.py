@@ -50,9 +50,10 @@ print(rf_auc_score)
 #create DataFrame of Probabilities
 rf_probabilities = pd.DataFrame(rf_proba)
 rf_probabilities['predicted'] = rf_yhat_test
-rf_probabilities['true'] = y_test
+rf_probabilities['true'] = np.array(y_test)
 rf_probabilities.columns = ['negative_prob', 'neutral_prob', 'positive_prob', 'predicted', 'true']
 
+rf_probabilities.to_csv('../data/rf_probabilities.csv')
 
 #Tuning RF Using GSEARCH
 '''

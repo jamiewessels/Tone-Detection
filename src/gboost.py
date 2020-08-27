@@ -44,7 +44,7 @@ tfid_ho = tfid_vectorizer.transform(X_ho).toarray()
 #XGBOOST CLASSIFIER
 
 xg_final = xgb.XGBClassifier(objective = 'multi:softmax', num_class = 3, 
-                        learning_rate=0.1, n_estimators = 200, verbosity = 3, 
+                        learning_rate=0.1, n_estimators = 1000, verbosity = 3, 
                         max_depth = 6, colsample_bynode=0.5)
 
 xg_final.fit(tfid_vect, y_train)

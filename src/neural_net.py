@@ -64,7 +64,7 @@ model2.add(Dense(3, activation = 'softmax'))
 
 model2.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
-model2.fit(tfid_vect, y_train, epochs = 200, batch_size = 500, verbose = 10, validation_data=(tfid_test, y_test), validation_split=0.2)
+model2.fit(tfid_vect, y_train, epochs = 1000, batch_size = 500, verbose = 10, validation_data=(tfid_test, y_test), validation_split=0.2)
 
 acc_m2 = model2.evaluate(tfid_test, y_test, verbose = 10)
 
