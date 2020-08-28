@@ -1,15 +1,5 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-## Detecting Tone from Text
-=======
-### Detecting Tone from Text
->>>>>>> 2afa0e33ad18f72d141265e50adcd13464c6fee0
-
-=======
-
 ## Detecting Tone from Text
 
->>>>>>> 06aaa14bc18638c980d33e36fbb6b86ee3cce37e
 ### About the Project
 
 **Purpose**: Develop a model to correctly classify reddit comments as positive, negative, or neutral.  
