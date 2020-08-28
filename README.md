@@ -59,11 +59,11 @@ The performance of each model is shown below.  XG Boost and Multilayer Perceptro
 Note: I tried all of the flavors of naive bayes, although multinomial is the most appropriate for TF-IDF matrices.  I am not sure why Bernoulli Naive Bayes performed so well, as my data was not binary.  I included the results here for further exploration.
 
 <p align="center">
-    <img src="images/Accuracy_roc_comparison.jpeg" width='600'/>
+    <img src="images/Accuracy_roc_comparison.jpeg" width='900'/>
 </p>
 
 <p align="center">
-    <img src="images/Model_comparison.jpeg" width='600'/>
+    <img src="images/Model_comparison.jpeg" width='900'/>
 </p>
 
 
@@ -108,7 +108,7 @@ The distributions of the predicted probabilities of each class shed some light o
 The graph below shows the predicted probabilities for the neutral class vs. the negative class for **true negative labels only**. I chose to look at this because in many applications, it is very important to be able to filter out true negative comments (customer reviews, etc.).  It is worth exploring the effect of adjusting the negative prediction threshold in order to improve negative recall. The dashed vertical line (P(negative) = 0.25) is just an example of where the threshold could be moved. 
 
 <p align="left">
-    <img src="images/true_negatives.jpeg" width='450'/>
+    <img src="images/True_negatives.jpeg" width='450'/>
 </p>
 
 Depending on what is most important to the user, it is worth exploring how adjusting thresholds may change the recall and precision of each class. The confusion matrix and graph below show how the model's performance changes when a different threshold is applied to the negative and neutral classes:
