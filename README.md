@@ -1,5 +1,4 @@
-### Capstone-2-Proposal
-Detecting Emotions from Text
+### Detecting Emotions from Text
 
 ##### Purpose
 The main purpose of this project is to develop a model that is able to classify the tone of reddit posts as positive, negative, or neutral.  
