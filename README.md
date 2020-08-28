@@ -1,4 +1,4 @@
-### Detecting Emotions from Text
+### Detecting Tone from Text
 
 ##### Purpose
 The main purpose of this project is to develop a model that is able to classify the tone of reddit posts as positive, negative, or neutral.  
