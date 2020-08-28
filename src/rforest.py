@@ -15,21 +15,16 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.decomposition import NMF
 
-#HOLD-0UT DATA 
-X_val, X_ho, y_val, y_ho = train_test_split(X, tone, stratify = tone, test_size = 0.15, random_state = 7)
-
-#TRAIN TEST SPLIT BEFORE VECTORIZATION
-X_train, X_test, y_train, y_test = train_test_split(X_val, y_val, stratify = y_val, test_size = 0.2, random_state = 7)
+#Train Test Split
+X_train, X_test, y_train, y_test  = train_test_split(X, tone, stratify = tone, test_size = 0.2, random_state = 7)
 
 #VECTORIZE TRAINING DATA
-tfid_vectorizer = TfidfVectorizer(max_features = 1000)
+tfid_vectorizer = TfidfVectorizer(max_features = 5000)
 tfid_vect = tfid_vectorizer.fit_transform(X_train).toarray()
 words_tfid = tfid_vectorizer.get_feature_names()
 
 #transforming X_test and X_holdout
 tfid_test = tfid_vectorizer.transform(X_test).toarray()
-tfid_ho = tfid_vectorizer.transform(X_ho).toarray()
-
 
 #RANDOM FOREST CLASSIFIER
 
@@ -42,7 +37,7 @@ rf_yhat_train = rf_final.predict(tfid_vect)
 rf_yhat_test = rf_final.predict(tfid_test)
 rf_proba = rf_final.predict_proba(tfid_test)  
 
-rf_auc_score = roc_auc_score(y_test, rf_proba, average = 'macro', multi_class = 'ovo') 
+rf_auc_score = roc_auc_score(y_test, rf_proba, average = 'weighted', multi_class = 'ovr') 
 rf_class_rept = classification_report(y_test, rf_yhat_test)
 print(rf_class_rept)
 print(rf_auc_score)

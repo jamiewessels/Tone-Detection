@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.decomposition import NMF, PCA
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import MultinomialNB, GaussianNB
 from cleaning_and_vectorization import X, tone, emotion, X_text_and_SR
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -15,31 +14,29 @@ from sklearn.preprocessing import LabelEncoder
 
 y_labels = LabelEncoder().fit_transform(tone)
 
-#HOLD-0UT DATA 
-X_val, X_ho, y_val, y_ho = train_test_split(X, tone, stratify = tone, test_size = 0.15, random_state = 7)
 
-#TRAIN TEST SPLIT BEFORE VECTORIZATION
-X_train, X_test, y_train, y_test = train_test_split(X_val, y_val, stratify = y_val, test_size = 0.2, random_state = 7)
+
+#Train Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, tone, stratify = tone, test_size = 0.2, random_state = 7)
+
 
 #VECTORIZE TRAINING DATA
-tfid_vectorizer = TfidfVectorizer(max_features = 1000)
+tfid_vectorizer = TfidfVectorizer(max_features = 5000)
 tfid_vect = tfid_vectorizer.fit_transform(X_train).toarray()
 words_tfid = tfid_vectorizer.get_feature_names()
 
+
 #transforming X_test and X_holdout
 tfid_test = tfid_vectorizer.transform(X_test).toarray()
-tfid_ho = tfid_vectorizer.transform(X_ho).toarray()
 
-count_vectorizer = CountVectorizer()
-count_vect = count_vectorizer.fit_transform(X_train).toarray()
-words_count = count_vectorizer.get_feature_names()
+#Save numpy zip file
+'''
+np.savez('tfid_vect', tfid_vect)
+np.savez('tfid_test', tfid_test)
+np.savez('y_test', y_test)
+np.savez('y_train', y_train)
+'''
 
-#QUICK ANALYSIS: largest word counts (top 20)
-#TODO WORD CLOUD? 
-'''
-top_idx = np.argsort(np.sum(count_vect, axis = 0))[::-1][:20]
-top_words = np.array(words_count)[top_idx]
-'''
 
 #most influential words (tfid matrix)
 '''
@@ -101,13 +98,12 @@ sigma_cum = np.cumsum(s_sq)*100/ np.sum(sigma_sq)
 
 
 #NMF EXPLORATION
-
 nmf = NMF(n_components = 30, max_iter = 3000)
 W = nmf.fit_transform(tfid_vect)
 H = nmf.components_
 recon_err = nmf.reconstruction_err_
 
-print(recon_err)
+# print(recon_err)
 
 topic_labels = []
 for i, row in enumerate(H):
@@ -116,6 +112,5 @@ for i, row in enumerate(H):
     # print('topic', i)
     print(f'Latent Topic #{i+1}: {np.array(words_tfid)[top_ten]}')
     topic_labels.append(top_ten)
-
 nmf_train = W
 nmf_test = nmf.transform(tfid_test)
