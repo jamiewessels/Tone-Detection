@@ -59,11 +59,11 @@ The performance of each model is shown below.  XG Boost and Multilayer Perceptro
 Note: I tried all of the flavors of naive bayes, although multinomial is the most appropriate for TF-IDF matrices.  I am not sure why Bernoulli Naive Bayes performed so well, as my data was not binary.  I included the results here for further exploration.
 
 <p align="center">
-    <img src="images/Accuracy_roc_comparison.jpeg" width='450'/>
+    <img src="images/Accuracy_roc_comparison.jpeg" width='600'/>
 </p>
 
 <p align="center">
-    <img src="images/Model_comparison.jpeg" width='450'/>
+    <img src="images/Model_comparison.jpeg" width='600'/>
 </p>
 
 
@@ -171,10 +171,7 @@ Latent Topic #20: ['make' 'sense' 'feel' 'even' 'want' 'sure' 'happy' 'better' '
 * Test model on original 27 emotion labels
 
 * Investigate whether text can be used to predict subreddits
-<<<<<<< HEAD
-=======
 
->>>>>>> 06aaa14bc18638c980d33e36fbb6b86ee3cce37e
 
 
 
